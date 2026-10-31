@@ -95,15 +95,22 @@
                 if (foundUrl) {
                     // 【關鍵防護】打死不自動跳轉，只把連結綁在按鈕上
                     const appBtn = document.getElementById("app-btn");
-                    appBtn.href = foundUrl;
+                    // 移除 href，改用 JavaScript 控制跳轉，以便我們在跳轉前先發送計數
+                    appBtn.href = "javascript:void(0)"; 
 
-                    // 【修正：按鈕被點擊時，才在背景發送計數訊號】
+                    // 【修正：先發送計數訊號，稍微延遲再跳轉】
                     appBtn.addEventListener('click', () => {
                         if (GAS_TRACK_URL && GAS_TRACK_URL.includes("script.google.com")) {
-                            // 使用 keepalive: true 確保網頁跳轉離開時，計數訊號依然能成功送到後端
-                            fetch(`${GAS_TRACK_URL}?action=track&id=${targetId}`, { keepalive: true })
+                            // 1. 先發出計數請求 (這裡不用管它成不成功，發出去就好)
+                            // 不使用 keepalive，而是用一般 fetch，然後用 setTimeout 確保它有時間發出
+                            fetch(`${GAS_TRACK_URL}?action=track&id=${targetId}`)
                                 .catch(err => console.log("計數訊號傳送忽略：", err));
                         }
+                        
+                        // 2. 給予 200 毫秒的緩衝時間讓 request 順利送出，然後再把使用者跳轉到蝦皮
+                        setTimeout(() => {
+                            window.location.href = foundUrl;
+                        }, 200);
                     });
 
                     // 延遲 0.6 秒讓使用者看到高級感的過場，再顯示按鈕
