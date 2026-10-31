@@ -96,9 +96,9 @@
                     setTimeout(() => {
                         clearInterval(textInterval); // 停止文字輪播
                         document.getElementById("animation-area").style.display = "none"; // 隱藏轉圈圈
-                        document.getElementById("message").innerHTML = "專屬通道已為您準備完畢 ✨"; // 更新提示字
+                        document.getElementById("message").innerHTML = "已為您準備好專屬連結✨"; // 更新提示字
                         document.getElementById("btn-container").style.display = "flex"; // 秀出按鈕
-                    }, 600);
+                    }, 300);
                 } else {
                     showError("找不到對應的專屬連結");
                 }
@@ -362,7 +362,7 @@
             
             <!-- 防堵 Threads 終極陷阱的提示字 -->
             <p id="hint-text" class="hint-text">
-                💡 若按鈕無效，請點擊右上角「⋯」<br>選擇<b>「以 Safari 開啟」</b>
+                💡 若按鈕無效，請點擊右上角「⋯」<br>選擇<b>「以外部瀏覽器開啟」</b>
             </p>
         </div>
     </div>
