@@ -18,7 +18,7 @@
         
         // 【新增】你的 GAS 網頁應用程式網址 (背景傳送計數訊號用)
         // ⚠️ 請務必替換成你實際的 GAS 網址！
-        const GAS_TRACK_URL = "https://script.google.com/macros/s/AKfycbzhVK3IcEWtBI0tt4DGuBTs89ZZw7oJRW9fBNqPgHFUnrZuerflUPtg70nEpsyKsZJuLQ/exec";
+        const GAS_TRACK_URL = "https://script.google.com/macros/s/你的_GAS_部署_ID/exec";
 
         // 高級感文案輪播邏輯
         const vipTexts = [
@@ -95,22 +95,15 @@
                 if (foundUrl) {
                     // 【關鍵防護】打死不自動跳轉，只把連結綁在按鈕上
                     const appBtn = document.getElementById("app-btn");
-                    // 移除 href，改用 JavaScript 控制跳轉，以便我們在跳轉前先發送計數
-                    appBtn.href = "javascript:void(0)"; 
+                    // 將 href 設為目標網址，達到零延遲極速跳轉
+                    appBtn.href = foundUrl; 
 
-                    // 【修正：先發送計數訊號，稍微延遲再跳轉】
+                    // 點擊瞬間，利用 keepalive 確保瀏覽器關閉網頁前把訊號送出
                     appBtn.addEventListener('click', () => {
                         if (GAS_TRACK_URL && GAS_TRACK_URL.includes("script.google.com")) {
-                            // 1. 先發出計數請求 (這裡不用管它成不成功，發出去就好)
-                            // 不使用 keepalive，而是用一般 fetch，然後用 setTimeout 確保它有時間發出
-                            fetch(`${GAS_TRACK_URL}?action=track&id=${targetId}`)
+                            fetch(`${GAS_TRACK_URL}?action=track&id=${targetId}`, { keepalive: true })
                                 .catch(err => console.log("計數訊號傳送忽略：", err));
                         }
-                        
-                        // 2. 給予 200 毫秒的緩衝時間讓 request 順利送出，然後再把使用者跳轉到蝦皮
-                        setTimeout(() => {
-                            window.location.href = foundUrl;
-                        }, 200);
                     });
 
                     // 延遲 0.6 秒讓使用者看到高級感的過場，再顯示按鈕
