@@ -18,7 +18,7 @@
         
         // 【新增】你的 GAS 網頁應用程式網址 (背景傳送計數訊號用)
         // ⚠️ 請務必替換成你實際的 GAS 網址！
-        const GAS_TRACK_URL = "https://script.google.com/macros/s/AKfycbwybTR8o54nnEDRyRjRkLT-02egy_I77Npyl3UIaHcAIvPcBcsk4ijjA9kVoozV3opCZQ/exec";
+        const GAS_TRACK_URL = "https://script.google.com/macros/s/你的_GAS_部署_ID/exec";
 
         // 高級感文案輪播邏輯
         const vipTexts = [
@@ -94,14 +94,17 @@
 
                 if (foundUrl) {
                     // 【關鍵防護】打死不自動跳轉，只把連結綁在按鈕上
-                    document.getElementById("app-btn").href = foundUrl;
+                    const appBtn = document.getElementById("app-btn");
+                    appBtn.href = foundUrl;
 
-                    // 【新增：背景發送計數訊號】
-                    // 使用 fire-and-forget，不加 await，完全不影響前端載入速度
-                    if (GAS_TRACK_URL && GAS_TRACK_URL.includes("script.google.com")) {
-                        fetch(`${GAS_TRACK_URL}?action=track&id=${targetId}`)
-                            .catch(err => console.log("計數訊號傳送忽略：", err));
-                    }
+                    // 【修正：按鈕被點擊時，才在背景發送計數訊號】
+                    appBtn.addEventListener('click', () => {
+                        if (GAS_TRACK_URL && GAS_TRACK_URL.includes("script.google.com")) {
+                            // 使用 keepalive: true 確保網頁跳轉離開時，計數訊號依然能成功送到後端
+                            fetch(`${GAS_TRACK_URL}?action=track&id=${targetId}`, { keepalive: true })
+                                .catch(err => console.log("計數訊號傳送忽略：", err));
+                        }
+                    });
 
                     // 延遲 0.6 秒讓使用者看到高級感的過場，再顯示按鈕
                     setTimeout(() => {
