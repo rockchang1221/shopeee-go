@@ -13,8 +13,12 @@
     <meta property="og:type" content="website">
 
     <script>
-        // 你的 Google Sheets 發布為 CSV 的網址
+        // 你的 Google Sheets 發布為 CSV 的網址 (極速讀取用)
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo7OsmqFpCf4y8RM_WJVyB_ZCAgTYPAv70CXuW73w0CkKmOHWP418DpBCD9xpZXVIgGmVxE5mj15Hw/pub?gid=0&single=true&output=csv";
+        
+        // 【新增】你的 GAS 網頁應用程式網址 (背景傳送計數訊號用)
+        // ⚠️ 請務必替換成你實際的 GAS 網址！
+        const GAS_TRACK_URL = "https://script.google.com/macros/s/AKfycbwybTR8o54nnEDRyRjRkLT-02egy_I77Npyl3UIaHcAIvPcBcsk4ijjA9kVoozV3opCZQ/exec";
 
         // 高級感文案輪播邏輯
         const vipTexts = [
@@ -92,6 +96,13 @@
                     // 【關鍵防護】打死不自動跳轉，只把連結綁在按鈕上
                     document.getElementById("app-btn").href = foundUrl;
 
+                    // 【新增：背景發送計數訊號】
+                    // 使用 fire-and-forget，不加 await，完全不影響前端載入速度
+                    if (GAS_TRACK_URL && GAS_TRACK_URL.includes("script.google.com")) {
+                        fetch(`${GAS_TRACK_URL}?action=track&id=${targetId}`)
+                            .catch(err => console.log("計數訊號傳送忽略：", err));
+                    }
+
                     // 延遲 0.6 秒讓使用者看到高級感的過場，再顯示按鈕
                     setTimeout(() => {
                         clearInterval(textInterval); // 停止文字輪播
@@ -140,13 +151,13 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0,0,0,0.05);
-            border-radius: 20px; /* 稍微縮小圓角 */
-            padding: 32px 24px; /* 縮小內部留白，讓內容更緊湊 */
-            width: 80%; /* 手機上左右會留 10% 空間 */
-            max-width: 320px; /* 限制最大寬度，看起來更精緻 */
+            border-radius: 20px;
+            padding: 32px 24px;
+            width: 80%;
+            max-width: 320px;
             text-align: center;
             transition: all 0.3s ease;
-            box-sizing: border-box; /* 確保 padding 算在 width 內 */
+            box-sizing: border-box;
         }
 
         /* 趣味形狀變換彈跳動畫 */
@@ -156,7 +167,7 @@
             justify-content: center;
             align-items: flex-end;
             margin-bottom: 24px;
-            height: 50px; /* 給予跳躍的高度空間 */
+            height: 50px;
         }
         
         .morph-shape {
@@ -183,104 +194,34 @@
         }
 
         @keyframes morphAndBounce {
-            0% {
-                transform: translateY(0) scale(1.4, 0.6) rotate(0deg); /* 落地壓扁 */
-                border-radius: 8px;
-                background-color: #ee4d2d;
-                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); /* 減速上升 */
-            }
-            12.5% {
-                transform: translateY(-35px) scale(0.9, 1.1) rotate(45deg); /* 騰空拉長 */
-                border-radius: 16px;
-                background-color: #ff9f43;
-                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2); /* 加速下墜 */
-            }
-            25% {
-                transform: translateY(0) scale(1.4, 0.6) rotate(90deg); /* 變為圓形落地 */
-                border-radius: 50%;
-                background-color: #ff6b81;
-                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-            }
-            37.5% {
-                transform: translateY(-35px) scale(0.9, 1.1) rotate(135deg);
-                border-radius: 16px;
-                background-color: #e74c3c;
-                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
-            }
-            50% {
-                transform: translateY(0) scale(1.4, 0.6) rotate(180deg); /* 變回方形落地 */
-                border-radius: 8px;
-                background-color: #ee4d2d;
-                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-            }
-            62.5% {
-                transform: translateY(-35px) scale(0.9, 1.1) rotate(225deg);
-                border-radius: 16px;
-                background-color: #ff9f43;
-                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
-            }
-            75% {
-                transform: translateY(0) scale(1.4, 0.6) rotate(270deg); /* 變為圓形落地 */
-                border-radius: 50%;
-                background-color: #ff6b81;
-                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-            }
-            87.5% {
-                transform: translateY(-35px) scale(0.9, 1.1) rotate(315deg);
-                border-radius: 16px;
-                background-color: #e74c3c;
-                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
-            }
-            100% {
-                transform: translateY(0) scale(1.4, 0.6) rotate(360deg); /* 完美循環 */
-                border-radius: 8px;
-                background-color: #ee4d2d;
-            }
+            0% { transform: translateY(0) scale(1.4, 0.6) rotate(0deg); border-radius: 8px; background-color: #ee4d2d; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+            12.5% { transform: translateY(-35px) scale(0.9, 1.1) rotate(45deg); border-radius: 16px; background-color: #ff9f43; animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2); }
+            25% { transform: translateY(0) scale(1.4, 0.6) rotate(90deg); border-radius: 50%; background-color: #ff6b81; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+            37.5% { transform: translateY(-35px) scale(0.9, 1.1) rotate(135deg); border-radius: 16px; background-color: #e74c3c; animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2); }
+            50% { transform: translateY(0) scale(1.4, 0.6) rotate(180deg); border-radius: 8px; background-color: #ee4d2d; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+            62.5% { transform: translateY(-35px) scale(0.9, 1.1) rotate(225deg); border-radius: 16px; background-color: #ff9f43; animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2); }
+            75% { transform: translateY(0) scale(1.4, 0.6) rotate(270deg); border-radius: 50%; background-color: #ff6b81; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+            87.5% { transform: translateY(-35px) scale(0.9, 1.1) rotate(315deg); border-radius: 16px; background-color: #e74c3c; animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2); }
+            100% { transform: translateY(0) scale(1.4, 0.6) rotate(360deg); border-radius: 8px; background-color: #ee4d2d; }
         }
 
         @keyframes shadowSync {
-            0% {
-                transform: scaleX(1); opacity: 0.3;
-                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-            }
-            12.5% {
-                transform: scaleX(0.3); opacity: 0.05;
-                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
-            }
-            25% {
-                transform: scaleX(1); opacity: 0.3;
-                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-            }
-            37.5% {
-                transform: scaleX(0.3); opacity: 0.05;
-                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
-            }
-            50% {
-                transform: scaleX(1); opacity: 0.3;
-                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-            }
-            62.5% {
-                transform: scaleX(0.3); opacity: 0.05;
-                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
-            }
-            75% {
-                transform: scaleX(1); opacity: 0.3;
-                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-            }
-            87.5% {
-                transform: scaleX(0.3); opacity: 0.05;
-                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
-            }
-            100% {
-                transform: scaleX(1); opacity: 0.3;
-            }
+            0% { transform: scaleX(1); opacity: 0.3; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+            12.5% { transform: scaleX(0.3); opacity: 0.05; animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2); }
+            25% { transform: scaleX(1); opacity: 0.3; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+            37.5% { transform: scaleX(0.3); opacity: 0.05; animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2); }
+            50% { transform: scaleX(1); opacity: 0.3; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+            62.5% { transform: scaleX(0.3); opacity: 0.05; animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2); }
+            75% { transform: scaleX(1); opacity: 0.3; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+            87.5% { transform: scaleX(0.3); opacity: 0.05; animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2); }
+            100% { transform: scaleX(1); opacity: 0.3; }
         }
 
         /* 文字樣式 */
         .status-text {
             margin: 0;
             font-weight: 600;
-            font-size: 1.05rem; /* 稍微縮小字體 */
+            font-size: 1.05rem;
             color: #2c3e50;
             letter-spacing: 0.5px;
             min-height: 26px;
@@ -308,8 +249,8 @@
             gap: 8px;
             background: linear-gradient(135deg, #ff743a 0%, #ee4d2d 100%);
             color: white;
-            padding: 14px 24px; /* 稍微縮小按鈕高度 */
-            border-radius: 25px; /* 稍微縮小圓角 */
+            padding: 14px 24px;
+            border-radius: 25px;
             text-decoration: none;
             font-weight: 700;
             font-size: 1.05rem;
@@ -328,7 +269,7 @@
         /* 防禦提示文字 */
         .hint-text {
             margin: 0;
-            font-size: 0.8rem; /* 稍微縮小提示字 */
+            font-size: 0.8rem;
             color: #8392a5;
             line-height: 1.4;
         }
