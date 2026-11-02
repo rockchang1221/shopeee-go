@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>蝦皮平價好物推薦</title>
-    <meta property="og:title" content="蝦皮平價好物推薦站">
-    <meta property="og:description" content="推薦的商品都是版主親自買過、用過的，點擊查看詳細介紹以及最新優惠資訊！">
+    <title>Hoodt.store | Short URL</title>
+    <meta property="og:title" content="Hoodt.store 線上選物店">
+    <meta property="og:description" content="推薦的商品都是版主親自買過用過！點擊查看詳細介紹以及最新優惠資訊🛍️">
 
     <meta property="og:image" content="og-image.jpg">
     <meta property="og:type" content="website">
@@ -109,7 +109,7 @@
                     setTimeout(() => {
                         clearInterval(textInterval); // 停止文字輪播
                         document.getElementById("animation-area").style.display = "none"; // 隱藏轉圈圈
-                        document.getElementById("message").innerHTML = "已為您準備好專屬連結✨"; // 更新提示字
+                        document.getElementById("message").innerHTML = "專屬連結已準備好"; // 更新提示字
                         document.getElementById("btn-container").style.display = "flex"; // 秀出按鈕
                     }, 300);
                 } else {
@@ -297,16 +297,11 @@
             
             <!-- 蝦皮漸層大按鈕 (href 會在 JS 中動態寫入) -->
             <a id="app-btn" href="#" class="premium-btn">
-                <span>立即前往蝦皮</span>
+                <span>立即查看優惠價🛒</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
             </a>
-            
-            <!-- 防堵 Threads 終極陷阱的提示字 -->
-            <p id="hint-text" class="hint-text">
-                💡 若按鈕無效，請點擊右上角「⋯」<br>選擇<b>「以外部瀏覽器開啟」</b>
-            </p>
         </div>
     </div>
 
